@@ -6,7 +6,8 @@ import (
 )
 
 type bot struct {
-	api *telegram.BotAPI
+	api     *telegram.BotAPI
+	storage *storage
 }
 
 func New(token string) (*bot, error) {
@@ -16,7 +17,7 @@ func New(token string) (*bot, error) {
 		return nil, err
 	}
 
-	tgBot := &bot{api: api}
+	tgBot := &bot{api: api, storage: createStorage()}
 	return tgBot, nil
 }
 
@@ -31,12 +32,12 @@ func (bot *bot) Start(debug bool) {
 	updates := bot.api.GetUpdatesChan(u)
 
 	for update := range updates {
-		if update.Message == nil {
-			continue
+		if update.Message != nil {
+			go bot.handleMessage(*update.Message)
 		}
-
-		message := update.Message
-		go bot.handleMessage(*message)
+		if update.CallbackQuery != nil {
+			go bot.handleCallback(*update.CallbackQuery)
+		}
 	}
 }
 
