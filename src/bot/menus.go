@@ -61,7 +61,7 @@ func (bot *bot) getChangeBetMenu(msgID int, chatID int64) tgbotapi.EditMessageTe
 
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(rowTop, rowDown)
 
-	body := fmt.Sprintf("Выберите сумму ставки:", bot.storage.getBalance(chatID))
+	body := fmt.Sprintf("Выберите сумму ставки:")
 	message := tgbotapi.NewEditMessageTextAndMarkup(chatID, msgID, body, keyboard)
 	return message
 }
