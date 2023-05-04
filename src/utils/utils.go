@@ -1,6 +1,9 @@
 package utils
 
-import telegram "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+import (
+	telegram "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"math/rand"
+)
 
 func ConvertButtonsToRows(columns int, buttons ...telegram.InlineKeyboardButton) (rows [][]telegram.InlineKeyboardButton) {
 
@@ -21,4 +24,8 @@ func ConvertButtonsToRows(columns int, buttons ...telegram.InlineKeyboardButton)
 	}
 
 	return rows
+}
+
+func RandSign() int {
+	return rand.Intn(2)*2 - 1
 }

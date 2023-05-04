@@ -34,6 +34,38 @@ func (bot *bot) getBalanceMenu(msgID int, chatID int64) tgbotapi.EditMessageText
 	return message
 }
 
+func (bot *bot) getPlayMenu(msgID int, chatID int64) tgbotapi.EditMessageTextConfig {
+	btnBack := tgbotapi.NewInlineKeyboardButtonData("Назад", menuCallback)
+	btnChange := tgbotapi.NewInlineKeyboardButtonData("Поменять ставку", changeBetCallback)
+	btnBlack := tgbotapi.NewInlineKeyboardButtonData("Черное", betBlackCallback)
+	btnRed := tgbotapi.NewInlineKeyboardButtonData("Красное", betRedCallback)
+
+	rowTop := tgbotapi.NewInlineKeyboardRow(btnBlack, btnRed)
+	rowDown := tgbotapi.NewInlineKeyboardRow(btnBack, btnChange)
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(rowTop, rowDown)
+
+	body := fmt.Sprintf("Ваш баланс: %v р. \nТекущая ставка: %v р.\n Выберите на что хотите поставить:", bot.storage.getBalance(chatID), bot.storage.getBet(chatID))
+	message := tgbotapi.NewEditMessageTextAndMarkup(chatID, msgID, body, keyboard)
+	return message
+}
+
+func (bot *bot) getChangeBetMenu(msgID int, chatID int64) tgbotapi.EditMessageTextConfig {
+	btnBack := tgbotapi.NewInlineKeyboardButtonData("Назад", playCallback)
+	btnOne := tgbotapi.NewInlineKeyboardButtonData("1", changeOneCallback)
+	btnTen := tgbotapi.NewInlineKeyboardButtonData("10", changeTenCallback)
+	btnHundred := tgbotapi.NewInlineKeyboardButtonData("100", changeHundredCallback)
+
+	rowTop := tgbotapi.NewInlineKeyboardRow(btnOne, btnTen)
+	rowDown := tgbotapi.NewInlineKeyboardRow(btnBack, btnHundred)
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(rowTop, rowDown)
+
+	body := fmt.Sprintf("Выберите сумму ставки:", bot.storage.getBalance(chatID))
+	message := tgbotapi.NewEditMessageTextAndMarkup(chatID, msgID, body, keyboard)
+	return message
+}
+
 func (bot *bot) getWithdrawMenu(msgID int, chatID int64) tgbotapi.EditMessageTextConfig {
 	btnBack := tgbotapi.NewInlineKeyboardButtonData("Назад", menuCallback)
 
@@ -44,11 +76,11 @@ func (bot *bot) getWithdrawMenu(msgID int, chatID int64) tgbotapi.EditMessageTex
 
 	body := fmt.Sprintf("Ваш баланс: %v р. \nКакую сумму вы желаете вывести?", bot.storage.getBalance(chatID))
 
-	if len(buttons) == 0 {
-		body = fmt.Sprintf("Ваш баланс: 0 р. \nПополните счет, чтобы вывести.", bot.storage.getBalance(chatID))
+	if len(buttons) == 1 {
+		body = fmt.Sprintf("Ваш баланс: 0 р. \nПополните счет, чтобы вывести.")
 	}
 
-	if len(buttons) == 1 {
+	if len(buttons) == 2 {
 		body = fmt.Sprintf("Ваш баланс: %v р. \nПодтвердите вывод всей суммы.", bot.storage.getBalance(chatID))
 	}
 
